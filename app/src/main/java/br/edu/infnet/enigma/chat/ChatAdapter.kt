@@ -10,14 +10,16 @@ import kotlinx.android.synthetic.main.sent_message_card.view.*
 import java.util.*
 
 class ChatAdapter: RecyclerView.Adapter<ChatAdapter.ChatViewHolder>() {
-    val items = listOf<ChatMessage>(
-        ChatMessage("hbsjhsdfs 1", Date().time, 0),
-        ChatMessage("hbsjhsdfs 2", Date().time, 1),
-        ChatMessage("hbsjhsdfs 3", Date().time, 0)
-    )
+    val items = mutableListOf<ChatMessage>()
     override fun getItemCount() = items.size
 
     override fun getItemViewType(position: Int) = items[position].senderId
+
+    fun addMessage(newMessage: ChatMessage){
+        items.add(newMessage)
+        // não é suficiente adicionar na lista, é preciso redesenhar a RecyclerView
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatAdapter.ChatViewHolder {
         // lê XML com descrição da View que exibe o item da lista
