@@ -17,15 +17,25 @@ class ChatAdapter: RecyclerView.Adapter<ChatAdapter.ChatViewHolder>() {
     )
     override fun getItemCount() = items.size
 
+    override fun getItemViewType(position: Int) = items[position].senderId
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatAdapter.ChatViewHolder {
         // lê XML com descrição da View que exibe o item da lista
         val card = LayoutInflater.from(parent.context)
-            .inflate(R.layout.sent_message_card, parent, false)
+            .inflate( if (viewType == 0) //decide pelo card de enviado ou recebido
+                        R.layout.sent_message_card
+                    else R.layout.received_message_card,
+                    parent, false)
         // retorna um ViewHolder construído a partir da view
         return ChatViewHolder(card)
     }
 
     override fun onBindViewHolder(holder: ChatAdapter.ChatViewHolder, position: Int) {
+        // mensagem da vez
+        val message = items[position]
+        // configura o viewholder para exibir os dados da mensagem
+        holder.messageTextView.text = message.text
+        holder.momentTextView.text = message.moment
     }
 
     class ChatViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
