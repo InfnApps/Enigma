@@ -61,7 +61,7 @@ class ChatFragment : Fragment() {
                     messagesCount = 0
                     botWait = (1..4).random()
                 }
-
+                message_list.smoothScrollToPosition(chatAdapter.itemCount-1)
             }
         }
     }
