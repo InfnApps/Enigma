@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -13,26 +14,22 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        setUpListeners()
     }
 
-//    override fun onRequestPermissionsResult(requestCode: Int,
-//                                            permissions: Array<out String>, grantResults: IntArray) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-//        Log.d(TAG, "on resquestPermissionResult")
-//        if (requestCode == 71){
-//            Log.d(TAG, "passou resquestCode")
-//            if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
-//                Log.d(TAG, "permissão concedida")
-//                // solicitar localização
-//                Toast.makeText(this, "Permissão concedida", Toast.LENGTH_LONG).show()
-//            } else {
-//                Log.d(TAG, "permissão negada")
-//                    Snackbar.make(
-//                        findViewById(R.id.root_view),
-//                        getString(R.string.location_denyed),
-//                        Snackbar.LENGTH_SHORT
-//                    ).show()
-//                }
-//            }
-//        }
+    private fun setUpListeners(){
+        bottom_navigationview.setOnNavigationItemSelectedListener {
+            val fragment = when(it.itemId){
+                R.id.chats_item -> ImageFragment()
+                else -> TextFragment()
+            }
+
+            val transaction = supportFragmentManager.beginTransaction()
+            transaction.replace(R.id.container, fragment)
+            transaction.commit()
+
+            true
+        }
+    }
 }
