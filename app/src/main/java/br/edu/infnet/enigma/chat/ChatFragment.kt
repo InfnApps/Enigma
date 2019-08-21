@@ -97,28 +97,28 @@ class ChatFragment : Fragment() {
 
     }
 
-//    override fun onRequestPermissionsResult(requestCode: Int,
-//                                            permissions: Array<out String>, grantResults: IntArray) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-//        Log.d(TAG, "on resquestPermissionResult")
-//        if (requestCode == LOCATION_REQUEST_CODE){
-//            Log.d(TAG, "passou resquestCode")
-//            if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
-//                Log.d(TAG, "permissão concedida")
-//                // solicitar localização
-//                Toast.makeText(context, "Permissão concedida", Toast.LENGTH_LONG).show()
-//            } else {
-//                Log.d(TAG, "permissão negada")
-//                activity?.let {
-//                    Snackbar.make(
-//                        it.findViewById(R.id.root_view),
-//                        getString(R.string.location_denyed),
-//                        Snackbar.LENGTH_SHORT
-//                    ).show()
-//                }
-//            }
-//        }
-//    }
+    override fun onRequestPermissionsResult(requestCode: Int,
+                                            permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        Log.d(TAG, "on resquestPermissionResult")
+        if (requestCode == LOCATION_REQUEST_CODE){
+            Log.d(TAG, "passou resquestCode")
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                Log.d(TAG, "permissão concedida")
+                // solicitar localização
+                Toast.makeText(context, "Permissão concedida", Toast.LENGTH_LONG).show()
+            } else {
+                Log.d(TAG, "permissão negada")
+                activity?.let {
+                    Snackbar.make(
+                        it.findViewById(R.id.root_view),
+                        getString(R.string.location_denyed),
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
 
 
 }
