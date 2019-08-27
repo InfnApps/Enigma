@@ -11,8 +11,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import br.edu.infnet.enigma.R
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_chat.*
 import java.util.*
@@ -33,6 +36,8 @@ class ChatFragment : Fragment() {
     // valor aleatório entre 1 e 4
     var botWait = (1..4).random()
 
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -46,6 +51,10 @@ class ChatFragment : Fragment() {
         // configuração da RecyclerView
         message_list.adapter = ChatAdapter()
         message_list.layoutManager = LinearLayoutManager(context)
+        context?.let {
+            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(it)
+        }
+
         setUpListeners()
     }
 
@@ -77,25 +86,53 @@ class ChatFragment : Fragment() {
         location_button.setOnClickListener {
             // verificar se eu já tenho a permissão de Location
             //1. Se não tenho permissão: solicita permissão
-            //2. Caso contrário: solicita a última localização conhecida do usuário
 
-            // solicitação da permissão ACCESS_FINE_LOCATION
-//            val fragmentActivity = activity
-//            if (fragmentActivity != null){
-//                ActivityCompat.requestPermissions(fragmentActivity,
-//                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-//                    LOCATION_REQUEST_CODE)
-//            }
-            activity?.let {
-                ActivityCompat.requestPermissions(it,
-                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION),
-                    LOCATION_REQUEST_CODE)
+            context?.let {
+                if (ContextCompat.checkSelfPermission(it,
+                        Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED){
+
+                    // solicita permissão ACCESS_FINE_LOCATION em tempo de execução
+                    requestPermissions(
+                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION),
+                        LOCATION_REQUEST_CODE)
+
+                } else { //2. Caso contrário: solicita a última localização conhecida do usuário
+                    //Toast.makeText(context, "JÁ Tenho Permissão", Toast.LENGTH_LONG).show()
+                    requestUserLocation()
+                }
             }
+
+
+
+
+
 
         }
 
     }
+
+    @SuppressWarnings("MissingPermission")
+    private fun requestUserLocation(){
+        fusedLocationProviderClient.lastLocation.addOnSuccessListener { location->
+
+            val message =  if (location != null){
+                "Lat:${location.latitude};Long:${location.longitude}"
+            } else {
+                "Localização desconhecida"
+            }
+
+            val chatMessage = ChatMessage(message, Date().time, USER_ID)
+            val chatAdapter = message_list.adapter
+            if (chatAdapter is ChatAdapter){
+                chatAdapter.addMessage(chatMessage)
+                // scroll para a última posição da recyclerview
+                message_list.smoothScrollToPosition(chatAdapter.itemCount-1)
+            }
+        }
+    }
+
 
     override fun onRequestPermissionsResult(requestCode: Int,
                                             permissions: Array<out String>, grantResults: IntArray) {
@@ -106,12 +143,14 @@ class ChatFragment : Fragment() {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 Log.d(TAG, "permissão concedida")
                 // solicitar localização
-                Toast.makeText(context, "Permissão concedida", Toast.LENGTH_LONG).show()
+                //Toast.makeText(context, "Permissão concedida", Toast.LENGTH_LONG).show()
+                requestUserLocation()
             } else {
+                val view = this.view
                 Log.d(TAG, "permissão negada")
-                activity?.let {
+                if(view != null) {
                     Snackbar.make(
-                        it.findViewById(R.id.root_view),
+                        view,
                         getString(R.string.location_denyed),
                         Snackbar.LENGTH_SHORT
                     ).show()
