@@ -3,12 +3,13 @@
 
     <item
         android:id="@+id/chats_item"
-        android:title="Conversas"
-        android:icon="@drawable/ic_add_location_black_24dp"
+        android:title="Contatos"
+        android:icon="@drawable/ic_chat_black_24dp"
     />
     <item
     android:id="@+id/profile_item"
     android:title="Perfil"
+    android:icon="@drawable/ic_person_black_24dp"
     />
 
 </menu>

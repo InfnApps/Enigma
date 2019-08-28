@@ -24,11 +24,9 @@ class MainActivity : AppCompatActivity() {
                 R.id.chats_item -> ImageFragment()
                 else -> TextFragment()
             }
-
             val transaction = supportFragmentManager.beginTransaction()
             transaction.replace(R.id.container, fragment)
             transaction.commit()
-
             true
         }
     }
